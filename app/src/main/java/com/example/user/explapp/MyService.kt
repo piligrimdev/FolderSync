@@ -76,7 +76,7 @@ class MyService : Service() {
 
         override fun doInBackground(vararg params: Unit?) : Unit {
             try {
-                val client = Socket("192.168.0.107", 8080)
+                val client = Socket("192.168.0.101", 8080)
                 val outStream = client.getOutputStream()
 
                 val data = mFile.readBytes()
