@@ -18,20 +18,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Сосать буш????"
+            android:hint="Explame : 192.168.0.100"
             />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="sendAnsewer"
-            android:text="А?"
+            android:onClick="changeIp"
+            android:text="Change IP"
             />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="openChooseDir"
-            android:text="Test"
+            android:text="Directories..."
             />
 
     </LinearLayout>

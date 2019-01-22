@@ -5,15 +5,18 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Handler
 import android.os.IBinder
+import android.widget.Toast
 import java.io.File
 import java.lang.Exception
 import java.net.Socket
 import java.nio.charset.Charset
 import java.util.*
 
+
 class MyService : Service() {
 
     private lateinit var mRunnable : Runnable
+    private var mIP : String? = null
 
     private val mHandler : Handler = Handler()
     private var fileLists : MutableMap<String?, MutableList<String>> = mutableMapOf()
@@ -28,11 +31,15 @@ class MyService : Service() {
 
         mRunnable = Runnable { checkDir() }
 
-        val fileList : MutableList<String> = mutableListOf()
-        File(intent?.getStringExtra("dir")).walk().forEach { fileList.add(it.toString()) }
-        fileLists[intent?.getStringExtra("dir")] = fileList
+        if ( intent?.getStringExtra("dir") != null ) {
+            val fileList: MutableList<String> = mutableListOf()
+            File(intent?.getStringExtra("dir")).walk().forEach { fileList.add(it.toString()) }
+            fileLists[intent?.getStringExtra("dir")] = fileList
 
-        dirList.add(intent?.getStringExtra("dir"))
+            dirList.add(intent?.getStringExtra("dir"))
+        }
+
+        mIP = intent?.getStringExtra("IP")
 
         mHandler.postDelayed(mRunnable, 5000)
 
@@ -63,7 +70,7 @@ class MyService : Service() {
 
                 for (x in newFiles) {
                     try {
-                        val task: sendFileClass = sendFileClass(File(x))
+                        val task: sendFileClass = sendFileClass(File(x), mIP)
                         task.execute()
                     } catch (e: Exception) {
                         val s = e.message
@@ -78,13 +85,20 @@ class MyService : Service() {
         mHandler.postDelayed(mRunnable, 5000)
     }
 
-    private class sendFileClass(file : File) : AsyncTask<Unit, Void, Unit>()
+    private class sendFileClass(file : File, IP : String?) : AsyncTask<Unit, Void, Unit>()
     {
         private val mFile = file
+        private val mIP = IP
+        private var state : String? = null
 
         override fun doInBackground(vararg params: Unit?) : Unit {
             try {
-                val client = Socket("192.168.0.105", 8080)
+                val client : Socket
+                if (mIP == null)
+                     client = Socket("192.168.0.105", 8080)
+                else
+                    client = Socket(mIP, 8080)
+
                 val outStream = client.getOutputStream()
 
                 val data = mFile.readBytes()
@@ -101,11 +115,8 @@ class MyService : Service() {
 
                 client.close()
             }
-            catch(ex : Exception)
-            {
-                val s = ex.message
-                print(s)
-            }
+            catch(ex : Exception) { print(ex.message) }
+
         }
     }
 }

@@ -15,6 +15,7 @@ import android.util.Log
 
 import android.graphics.Color
 
+import android.widget.Toast
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.LinearLayout
@@ -24,9 +25,8 @@ import java.net.URI
 
 public class MainActivity : AppCompatActivity() {
 
-    public val EXTRA_MESSAGE : String = "com.example.explapp.MESSAGE"
-
     private val rootDir : String = "/storage/emulated/0/"
+    private var currentIP : String? = "192.168.0.105"
 
     private lateinit var dirsScrollLayout : LinearLayout
 
@@ -37,12 +37,21 @@ public class MainActivity : AppCompatActivity() {
         dirsScrollLayout = findViewById(R.id.dirsLayout) as LinearLayout
     }
 
-    fun sendAnsewer(view : View)
+    fun changeIp(view : View)
     {
         val editText = findViewById(R.id.edit_maesage) as EditText
-        val msg : String = editText.text.toString()
-        if(msg != "")
-            startService(Intent(this, MyService::class.java).putExtra("dir", rootDir + msg))
+        if (editText.text.toString() != "") {
+            currentIP = editText.text.toString()
+            startService(Intent(this, MyService::class.java).putExtra("IP", currentIP))
+        }
+        else {
+            currentIP = null
+            val toast = Toast.makeText(applicationContext, "IP Changed to default",
+                    Toast.LENGTH_SHORT)
+            toast.show()
+            startService(Intent(this, MyService::class.java))
+        }
+
     }
 
     fun openChooseDir(view : View)
@@ -60,20 +69,25 @@ public class MainActivity : AppCompatActivity() {
 
             val newDirView : TextView = TextView(this)
 
-            val layoutParams : LayoutParams = LayoutParams(LayoutParams.MATCH_PARENT,
+            val layParams : LayoutParams = LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT, 1.0f)
-            layoutParams.setMargins(10, 10, 10, 10)
+            layParams.setMargins(10, 10, 10, 10)
 
-            newDirView.layoutParams = layoutParams
-            newDirView.text = path
-            newDirView.textSize = 18.0f
-            newDirView.setBackgroundColor(Color.parseColor("#bdbdbd"))
-
+            with(newDirView) {
+                layoutParams = layParams
+                text = path
+                textSize = 18.0f
+                setBackgroundColor(Color.parseColor("#bdbdbd"))
+            }
 
             dirsScrollLayout.addView(newDirView)
             dirsScrollLayout.invalidate()
 
-            startService(Intent(this, MyService::class.java).putExtra("dir", rootDir + path))
+            val intent : Intent = Intent(this, MyService::class.java)
+            intent.putExtra("dir", rootDir + path)
+            intent.putExtra("IP", currentIP)
+
+            startService(intent)
         }
     }
 }
