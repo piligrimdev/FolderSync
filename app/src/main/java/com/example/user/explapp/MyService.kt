@@ -1,6 +1,7 @@
 package com.example.user.explapp
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Handler
@@ -69,8 +70,8 @@ class MyService : Service() {
                 val newFiles = set2.minus(set1)
 
                 for (x in newFiles) {
-                    try {
-                        val task: sendFileClass = sendFileClass(File(x), mIP)
+                    try{
+                        val task: sendFileClass = sendFileClass(File(x), mIP, applicationContext)
                         task.execute()
                     } catch (e: Exception) {
                         val s = e.message
@@ -84,18 +85,18 @@ class MyService : Service() {
         }
         mHandler.postDelayed(mRunnable, 5000)
     }
-
-    private class sendFileClass(file : File, IP : String?) : AsyncTask<Unit, Void, Unit>()
+    private class sendFileClass(file : File, IP : String?, context : Context) : AsyncTask<Unit, Void, Unit>()
     {
         private val mFile = file
         private val mIP = IP
+        private val mContext = context
         private var state : String? = null
 
         override fun doInBackground(vararg params: Unit?) : Unit {
             try {
                 val client : Socket
                 if (mIP == null)
-                     client = Socket("192.168.0.105", 8080)
+                    client = Socket("192.168.0.105", 8080)
                 else
                     client = Socket(mIP, 8080)
 
@@ -114,9 +115,15 @@ class MyService : Service() {
                 outStream.write(data)
 
                 client.close()
-            }
-            catch(ex : Exception) { print(ex.message) }
 
+                state = "File ${mFile.name} sended!"
+            }
+            catch(ex : Exception) { print(ex.message); state = ex.message }
+        }
+
+        override fun onPostExecute(result: Unit?) {
+            super.onPostExecute(result)
+            val toast = Toast.makeText(mContext, state, Toast.LENGTH_SHORT).show()
         }
     }
 }

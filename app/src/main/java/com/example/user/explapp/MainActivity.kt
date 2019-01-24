@@ -1,9 +1,12 @@
 package com.example.user.explapp
 
 import android.app.Activity
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 
 import android.os.Bundle
+import android.os.Handler
+
 import android.view.View
 import android.content.Intent
 
@@ -14,14 +17,13 @@ import android.support.v4.provider.DocumentFile
 import android.util.Log
 
 import android.graphics.Color
+import android.os.AsyncTask
 
 import android.widget.Toast
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
-
-import java.net.URI
 
 public class MainActivity : AppCompatActivity() {
 
