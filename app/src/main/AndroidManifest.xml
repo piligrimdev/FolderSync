@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.user.explapp">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -22,6 +22,10 @@
 
         <service
             android:name=".MyService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".FullDirSend_Service"
             android:enabled="true"
             android:exported="true"></service>
     </application>

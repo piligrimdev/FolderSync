@@ -62,6 +62,18 @@ public class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, 42)
     }
 
+    fun sendAllDir(view : TextView, path : String) : Unit
+    {
+        val intent : Intent = Intent(this, FullDirSend_Service::class.java)
+        intent.putExtra("dir", rootDir + path)
+        intent.putExtra("IP", currentIP)
+        startService(intent)
+
+        view.setBackgroundColor(Color.parseColor("#4286f4"))
+        view.isClickable = false
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 42 && resultCode == Activity.RESULT_OK)
@@ -80,6 +92,7 @@ public class MainActivity : AppCompatActivity() {
                 text = path
                 textSize = 18.0f
                 setBackgroundColor(Color.parseColor("#bdbdbd"))
+                setOnClickListener { sendAllDir(newDirView, path) }
             }
 
             dirsScrollLayout.addView(newDirView)
