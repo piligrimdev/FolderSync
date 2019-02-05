@@ -26,12 +26,8 @@ class sendFileClass(file : File, IP : String?, context : Context) : AsyncTask<Un
             val outStream = client.getOutputStream()
 
             val data = mFile.readBytes()
-            val len = mFile.length()
 
-            var info: String = "{'name' : '${mFile.name}', 'date' : '', 'tags': '', 'len': '$len'}@"
-
-            for (i in info.length..1024)
-                info += "0"
+            var info: String = "{'name' : '${mFile.name}', 'tags': ''}"
 
             outStream.write(info.toByteArray(Charset.defaultCharset()))
 
